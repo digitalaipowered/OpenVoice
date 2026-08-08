@@ -167,7 +167,6 @@ def build_demo() -> gr.Blocks:
                 reference = gr.Audio(
                     label="Reference voice",
                     type="filepath",
-                    sources=["upload", "microphone"],
                 )
                 output = gr.Audio(label="Generated voice", type="filepath")
 
