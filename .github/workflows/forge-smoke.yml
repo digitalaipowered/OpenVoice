@@ -1,0 +1,34 @@
+name: OpenVoice Forge smoke check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'forge_app/**'
+      - 'Dockerfile.forge'
+      - 'OPENVOICE_FORGE.md'
+      - '.github/workflows/forge-smoke.yml'
+  pull_request:
+    paths:
+      - 'forge_app/**'
+      - 'Dockerfile.forge'
+      - 'OPENVOICE_FORGE.md'
+      - '.github/workflows/forge-smoke.yml'
+
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - name: Compile Forge Python
+        run: python -m py_compile forge_app/__init__.py forge_app/__main__.py forge_app/app.py
+      - name: Verify required deployment files
+        run: |
+          test -f Dockerfile.forge
+          test -f OPENVOICE_FORGE.md
+          grep -q 'checkpoints_v2_0417.zip' Dockerfile.forge
+          grep -q 'ToneColorConverter' forge_app/app.py
+          grep -q 'se_extractor.get_se' forge_app/app.py
